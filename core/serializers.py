@@ -1,16 +1,19 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
+from garden_assist.serializers import GardenSerializer
 
 # Serializes current user
 class UserSerializer(serializers.ModelSerializer):
+    gardens = GardenSerializer(many=True, required=False)
 
     class Meta:
         model = User
-        fields = ['username']
+        fields = ['username', 'gardens']
 
 # Serializes new user sign ups that responds with the new user's information including a new token.
 class UserSerializerWithToken(serializers.ModelSerializer):
+    gardens = GardenSerializer(many=True, required=False)
 
     token = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True)
@@ -33,4 +36,4 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['token', 'username', 'password']
+        fields = ['token', 'username', 'password', 'gardens']

@@ -1,7 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import GardenList from '../components/GardenList/GardenList'
 
 const HomePage = ({ isLoggedIn, user, handleLogout }) => {
+
+  // if(user){
+  //   console.log(user.gardens)
+  // }
 
   return (
     <div>
@@ -23,8 +28,16 @@ const HomePage = ({ isLoggedIn, user, handleLogout }) => {
             <Link to='/signup'>Signup</Link>
           </div>
         </div>
+
         :
-        <button onClick={handleLogout}>Logout</button>
+        
+        <div>
+          <button onClick={handleLogout}>Logout</button>
+          <hr/>
+          <GardenList gardens={user.gardens} />
+          {/* <Link to="/gardens">View your Gardens</Link> */}
+        </div>
+               
       }
     </div>
   );
