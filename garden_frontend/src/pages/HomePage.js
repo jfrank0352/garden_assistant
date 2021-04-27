@@ -8,6 +8,16 @@ const HomePage = ({ isLoggedIn, user, handleLogout }) => {
   //   console.log(user.gardens)
   // }
 
+  const renderGardenList = () =>{
+    if(user && user.gardens !== null){
+      return (
+        <GardenList gardens={user.gardens} />
+      )
+    }else {
+      return ""
+    }
+  }
+
   return (
     <div>
       Home Page
@@ -34,7 +44,7 @@ const HomePage = ({ isLoggedIn, user, handleLogout }) => {
         <div>
           <button onClick={handleLogout}>Logout</button>
           <hr/>
-          <GardenList gardens={user.gardens} />
+          {renderGardenList()}
           {/* <Link to="/gardens">View your Gardens</Link> */}
         </div>
                

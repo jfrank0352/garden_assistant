@@ -24,7 +24,7 @@ const SignupPage = (props) => {
       Signup Page
       <form onSubmit={handleSignup}>
         <label>UserName:</label>
-        <input type='text' placeholder='RonBurgondy' name='username' />
+        <input type='text' placeholder='Username' name='username' />
         <label>Password:</label>
         <input type='password' name='password' />
         <button type='submit' >Sign Up</button>

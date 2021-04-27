@@ -16,4 +16,4 @@ class PlantViewSet(viewsets.ModelViewSet):
     serializer_class = PlantSerializer
 
     def get_queryset(self):
-        return Plant.objects.filter(category=self.kwargs['garden_pk'])
+        return Plant.objects.filter(garden=self.kwargs['garden_pk'])
