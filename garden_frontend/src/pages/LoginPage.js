@@ -1,15 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 const Login = ({isLoggedIn, handleLogout, handleLogin}) => {
 
-  if (isLoggedIn) {
-    return <div>
-      <button onClick={handleLogout}>Logout</button>
-      <div>
-        <Link to='/'>Home</Link>
-      </div>
-    </div>
+  if (isLoggedIn !== false) {
+    return <Redirect to='/' />
+    
+      // <div>
+      //   <button onClick={handleLogout}>Logout</button>
+      //   <div>
+      //     <Link to='/'>Home</Link>
+      //   </div>
+      // </div>
   }
 
   return (

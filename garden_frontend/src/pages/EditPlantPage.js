@@ -2,24 +2,24 @@ import { Form, Button } from 'react-bootstrap'
 import GardenAPI from '../api/GardenAPI.js'
 import React from 'react';
 
-const AddGardenPage = (props) => {
-  // const {props.user} = props
+const EditPlantPage = (props) => {
+  let gardenID = props.match.params.gardenID
+  let plantID = props.match.params.plantID
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    const gardenObject = {
-      garden_name: event.target.garden_name.value,
-      location: event.target.location.value,
-      user: props.user.id,
+    const plantObject = {
+      plant_name: event.target.plant_name.value,
+      garden: gardenID,
     }
     try {
-      let response = await GardenAPI.addGarden(gardenObject, props.user.token)
+      let response = await GardenAPI.editPlant(plantObject, gardenID, plantID, props.user.token)
         if (response.error){
           return `There was an error ${response.error}`
         }
-      props.history.push('/')
+      props.history.push(`/${gardenID}/plants/${plantID}`)
     } catch(error){
-      console.error(error)
+      console.log(error)
     }
   
   }
@@ -28,13 +28,8 @@ const AddGardenPage = (props) => {
     return (
       <div>
         <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="garden_name">
-            <Form.Label>Garden Name:</Form.Label>
-            <Form.Control/>
-          </Form.Group>
-
-          <Form.Group controlId="location">
-            <Form.Label>Location:</Form.Label>
+          <Form.Group controlId="plant_name">
+            <Form.Label>Plant Name:</Form.Label>
             <Form.Control/>
           </Form.Group>
 
@@ -52,7 +47,7 @@ const AddGardenPage = (props) => {
         props.user
         ?
         <div>
-          <h1>Create a Garden:</h1>
+          <h1>Add a new Plant:</h1>
           {renderForm()}
         </div>
         :
@@ -63,4 +58,4 @@ const AddGardenPage = (props) => {
 };
 
 
-export default AddGardenPage
+export default EditPlantPage

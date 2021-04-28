@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import GardenAPI from "../api/GardenAPI"
-import { Link, Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 
 const PlantPage = (props) => {
   const [deleted, setDeleted] = useState(false)
+  const [plant, setPlant] = useState(null)
   const [plantData, setPlantData] = useState(null)
   const {user} = props
 
@@ -12,47 +13,60 @@ const PlantPage = (props) => {
   let plantID = props.match.params.plantID
 
   useEffect(() => {
+    const getPlant = async () => {
+      try{
+        const response = await GardenAPI.fetchPlantByID(gardenID, plantID, user.token)
+        setPlant(response)
+      }catch (error) {
+        console.error(error)
+      }
+    }
+    if (!plant){
+      getPlant()
+    }
+  }, [])
+
+  useEffect(() => {
 
     const getPlantData = async () => {
       try {
-        let plant = user.gardens[gardenID -1].plants[plantID -1].plant_name
-        const response = await GardenAPI.fetchPlantData(plant);
-        console.log("response: ",response.data[0])
-        setPlantData(response.data[0].attributes);
+        const dataResponse = await GardenAPI.fetchPlantData(plant.plant_name);
+        setPlantData(dataResponse.data[0].attributes);
       } catch (error) {
         console.error('Error occurred fetching data: ', error);
       }
-      console.log("plant data: ",plantData)
+
     }
-    if (plantData == null) {
+    if (plant) {
       getPlantData()
     } 
-  }, [plantData])
+  }, [plant])
 
-  //Deletes Garden
-  const handleClick = (gardenID, plantID) =>{
+  //Deletes Plant
+  const handleClick = () =>{
     try {
-      GardenAPI.deletePlant(gardenID, plantID)
+      GardenAPI.deletePlant(gardenID, plantID, user.token)
       setDeleted(true)
     } catch (err) {
       console.error(err)
     }
   }
 
-  const renderPlant = (plantID) => {
-    if(user && user.gardens[gardenID -1].plants !== null){
-      let plant = user.gardens[gardenID -1].plants[plantID -1]
+  const renderPlant = () => {
+    if(user && plant && deleted === false){
       return (
         <div>
           <h1>{plant.plant_name}</h1>
-          <Link to={`/`}>Home</Link>
+          <Link to={`/${gardenID}`}>Garden</Link>
+          <br/>
+          <Link to={`/${gardenID}/plants/${plantID}/edit`}>Edit Plant &nbsp;|&nbsp;</Link>
           <input type='button' value='Delete' onClick={handleClick}></input>
           <hr/>
           {
             plantData
             ?
             <div>
-              <img src={plantData.main_image_path}/>
+              <img src={plantData.main_image_path} alt='plant_image'/>
               <h3>Description:</h3>
               <p>{plantData.description}</p>
               <p>Sun Requirement: {plantData.sun_requirements}</p>
@@ -68,19 +82,17 @@ const PlantPage = (props) => {
       return (
         <div>
           <p>This plant has been deleted</p>
-          <Link to={`/`}>Home</Link>
+          <Link to={`/${gardenID}`}>Back to Garden</Link>
         </div>
       )
     } else {
-      return (
-        <Redirect  to='/login' />
-      )
+      return ""
     }
   } 
 
   return (
     <div>
-      {renderPlant(plantID)}
+      {renderPlant()}
     </div>
   );
 };

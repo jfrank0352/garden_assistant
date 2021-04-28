@@ -1,20 +1,33 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, {useState, useEffect}from 'react'
+import { Link } from 'react-router-dom'
+import GardenAPI from '../api/GardenAPI'
 import GardenList from '../components/GardenList/GardenList'
 
 const HomePage = ({ isLoggedIn, user, handleLogout }) => {
+  const [gardens, setGardens] = useState(null)
 
-  // if(user){
-  //   console.log(user.gardens)
-  // }
+  useEffect(() => {
+    const getGardens = async () => {
+      console.log(user)
+      try{
+        const response = await GardenAPI.fetchAllGardens(user.token)
+        setGardens(response)
+      }catch (error) {
+        console.error(error)
+      }
+    }
+    if (!gardens){
+      getGardens()
+    }
+  })
 
   const renderGardenList = () =>{
-    if(user && user.gardens !== null){
+    if(user && gardens !== null){
       return (
-        <GardenList gardens={user.gardens} />
+        <GardenList gardens={gardens} />
       )
     }else {
-      return ""
+      return "Error!"
     }
   }
 
@@ -24,7 +37,7 @@ const HomePage = ({ isLoggedIn, user, handleLogout }) => {
       {
         user &&
         <div>
-          Hi {user.username}
+          <h2>Hi {user.username}</h2>
         </div>
       }
       {
@@ -42,10 +55,13 @@ const HomePage = ({ isLoggedIn, user, handleLogout }) => {
         :
         
         <div>
+          <Link to="/new-garden">Create a new Garden</Link>
+          <br/>
           <button onClick={handleLogout}>Logout</button>
+          
+          
           <hr/>
           {renderGardenList()}
-          {/* <Link to="/gardens">View your Gardens</Link> */}
         </div>
                
       }

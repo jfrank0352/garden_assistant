@@ -1,9 +1,7 @@
 let BASE_URL = "http://localhost:8000/garden-api/gardens/"
 
 
-const fetchAllGardens = async () => {
-  let token = localStorage.getItem("auth-user")
-  console.log(token)
+const fetchAllGardens = async (token) => {
   try {
     const response = await fetch(BASE_URL, {
       headers: {
@@ -20,20 +18,36 @@ const fetchAllGardens = async () => {
   }
 };
 
-const addGarden = (gardenObject) => {
-  return fetch(BASE_URL, {
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    method: 'Plant',
-    body: JSON.stringify(gardenObject)
-  })
+const addGarden =  async (gardenObject, token) => {
+  try {
+    const response = await fetch(BASE_URL, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `JWT ${token}`
+      },
+      method: 'POST',
+      body: JSON.stringify(gardenObject)
+    })
+    const data = response.json()
+    if (data.error){
+      return {'message': data.error.message, 'statusCode': 404}
+    }else {
+      return data
+    }
+  } catch (error) {
+    console.error(error)
+  }
+  
 }
 
-
-const fetchGardenByID = async (gardenID) => {
+const fetchGardenByID = async (gardenID, token) => {
   try {
-    const response = await fetch(`${BASE_URL}${gardenID}/`);
+    const response = await fetch(`${BASE_URL}${gardenID}/`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `JWT ${token}`
+      }
+    });
     const data = await response.json();
     return data;
   }
@@ -43,19 +57,25 @@ const fetchGardenByID = async (gardenID) => {
   
 };
 
-const editGarden = (gardenObject, gardenID) => {
+const editGarden = (gardenObject, gardenID, token) => {
   return fetch(`${BASE_URL}${gardenID}/`, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `JWT ${token}`
     },
     method: 'PATCH',
     body: JSON.stringify(gardenObject)
   })
 }
 
-const fetchGardenPlants = async (gardenID) => {
+const fetchGardenPlants = async (gardenID, token) => {
   try {
-    const response = await fetch(`${BASE_URL}${gardenID}/plants/`);
+    const response = await fetch(`${BASE_URL}${gardenID}/plants/`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `JWT ${token}`
+      }
+    });
     const data = response.json();
     return data;
   }
@@ -65,9 +85,14 @@ const fetchGardenPlants = async (gardenID) => {
   
 };
 
-const fetchPlantByID = async (gardenID, plantID) => {
+const fetchPlantByID = async (gardenID, plantID, token) => {
   try {
-    const response = await fetch(`${BASE_URL}${gardenID}/plants/${plantID}`);
+    const response = await fetch(`${BASE_URL}${gardenID}/plants/${plantID}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `JWT ${token}`
+      }
+    });
     const data = await response.json();
     return data;
   }
@@ -77,39 +102,43 @@ const fetchPlantByID = async (gardenID, plantID) => {
   
 };
 
-const addPlant = (plantObject, gardenID) => {
+const addPlant = (plantObject, gardenID, token) => {
   return fetch(`${BASE_URL}${gardenID}/plants/`, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `JWT ${token}`
     },
     method: 'POST',
     body: JSON.stringify(plantObject)
   })
 }
 
-const editPlant = (plantObject, gardenID, plantID) => {
+const editPlant = (plantObject, gardenID, plantID, token) => {
   return fetch(`${BASE_URL}${gardenID}/plants/${plantID}/`, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `JWT ${token}`
     },
     method: 'PATCH',
     body: JSON.stringify(plantObject)
   })
 }
 
-const deletePlant = (gardenID, plantID) => {
+const deletePlant = (gardenID, plantID, token) => {
   return fetch(`${BASE_URL}${gardenID}/plants/${plantID}/`, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `JWT ${token}`
     },
     method: 'DELETE',
   })
 }
 
-const deleteGarden = (gardenID) => {
+const deleteGarden = (gardenID, token) => {
   return fetch(`${BASE_URL}${gardenID}/`, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `JWT ${token}`
     },
     method: 'DELETE',
   })

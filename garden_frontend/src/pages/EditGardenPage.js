@@ -2,8 +2,8 @@ import { Form, Button } from 'react-bootstrap'
 import GardenAPI from '../api/GardenAPI.js'
 import React from 'react';
 
-const AddGardenPage = (props) => {
-  // const {props.user} = props
+const EditGardenPage = (props) => {
+  let gardenID = props.match.params.gardenID
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -13,7 +13,7 @@ const AddGardenPage = (props) => {
       user: props.user.id,
     }
     try {
-      let response = await GardenAPI.addGarden(gardenObject, props.user.token)
+      let response = await GardenAPI.editGarden(gardenObject, gardenID, props.user.token)
         if (response.error){
           return `There was an error ${response.error}`
         }
@@ -52,7 +52,7 @@ const AddGardenPage = (props) => {
         props.user
         ?
         <div>
-          <h1>Create a Garden:</h1>
+          <h1>Edit your Garden:</h1>
           {renderForm()}
         </div>
         :
@@ -63,4 +63,4 @@ const AddGardenPage = (props) => {
 };
 
 
-export default AddGardenPage
+export default EditGardenPage

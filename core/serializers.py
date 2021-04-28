@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'gardens']
+        fields = ['id', 'username', 'gardens']
 
 # Serializes new user sign ups that responds with the new user's information including a new token.
 class UserSerializerWithToken(serializers.ModelSerializer):
@@ -36,4 +36,4 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['token', 'username', 'password', 'gardens']
+        fields = ['id','token', 'username', 'password', 'gardens']

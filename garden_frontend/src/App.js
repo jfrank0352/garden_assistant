@@ -7,11 +7,16 @@ import SignupPage from './pages/SignupPage'
 import GardenPage from './pages/GardenPage'
 import PlantPage from './pages/PlantPage'
 import { getLoggedInUser, login } from './api/UserAPI'
+import AddGardenPage from './pages/AddGardenPage'
+import AddPlantPage from './pages/AddPlantPage'
+import EditGardenPage from './pages/EditGardenPage'
+import EditPlantPage from './pages/EditPlantPage'
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState(null);
+  const [authUser, setAuthUser] = useState(null)
 
   useEffect(() => {
     const getUser = async () => {
@@ -21,13 +26,13 @@ function App() {
         let data = await response.json()
         if (data.username) {
           setIsLoggedIn(true)
-          setUser(data)
+          setAuthUser(data)
         }
       }
     }
-    if (!user) {
-      getUser()
-    } 
+
+    getUser()
+
   }, [user])
 
 
@@ -59,29 +64,29 @@ function App() {
         isLoggedIn={isLoggedIn}
         handleLogin={handleLogin}
         handleLogout={handleLogout}
-        user={user}
+        user={authUser}
       />
     )
   }
 
   const renderHomePage = () => {
-    console.log(user)
+    console.log("App-user:", authUser)
     return (
       <HomePage
         isLoggedIn={isLoggedIn}
-        user={user}
+        user={authUser}
         handleLogout={handleLogout}
       />
     )
   }
 
   const renderGardenPage = (routeProps) => {
-    console.log('render Garden:',user)
+    console.log('render Garden:',authUser)
     return (
       <GardenPage
         {...routeProps}
         isLoggedIn={isLoggedIn}
-        user={user}
+        user={authUser}
       />
     )
   }
@@ -91,10 +96,47 @@ function App() {
       <PlantPage
         {...routeProps}
         isLoggedIn={isLoggedIn}
-        user={user}
+        user={authUser}
       />
     )
   }
+
+  const renderAddGarden = (routeProps) => {
+    return (
+      <AddGardenPage
+        {...routeProps}
+        user={authUser}
+      />
+    )
+  }
+
+  const renderAddPlant = (routeProps) => {
+    return (
+      <AddPlantPage
+        {...routeProps}
+        user={authUser}
+      />
+    )
+  }
+
+  const renderEditGarden = (routeProps) => {
+    return (
+      <EditGardenPage
+        {...routeProps}
+        user={authUser}
+      />
+    )
+  }
+
+  const renderEditPlant = (routeProps) => {
+    return (
+      <EditPlantPage
+        {...routeProps}
+        user={authUser}
+      />
+    )
+  }
+  
 
   return (
     <div className="App">
@@ -102,8 +144,12 @@ function App() {
         <Route exact path="/" render={renderHomePage} />
         <Route exact path="/login" render={renderLoginPage} />
         <Route exact path="/signup" component={SignupPage} />
+        <Route exact path="/new-garden" render={renderAddGarden} />
         <Route exact path="/:gardenID(\d+)" render={renderGardenPage} />
+        <Route exact path="/:gardenID(\d+)/edit" render={renderEditGarden} />
+        <Route exact path="/:gardenID(\d+)/new-plant" render={renderAddPlant} />
         <Route exact path="/:gardenID(\d+)/plants/:plantID(\d+)" render={renderPlantPage} />
+        <Route exact path="/:gardenID(\d+)/plants/:plantID(\d+)/edit" render={renderEditPlant} />
       </Router>
     </div>
   );

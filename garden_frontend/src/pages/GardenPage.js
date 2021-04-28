@@ -5,34 +5,49 @@ import { Link, Redirect } from 'react-router-dom'
 import PlantList from '../components/PlantList/PlantList';
 
 const GardenPage = (props) => {
-  // const [garden, setGarden] = useState(null)
   const [deleted, setDeleted] = useState(false)
+  const [plants, setPlants] = useState(null)
+  const [garden, setGarden] = useState(null)
 
-   const {user} = props
+  const {user} = props
+  let gardenID = props.match.params.gardenID
 
-  // useEffect(() => {
-  //   const fetchDataAsync = async () => {
-  //     try {
-  //       let gardenID = props.match.params.gardenID
-  //       const jsonResponse = await GardenAPI.fetchGardenByID(gardenID);
-  //       console.log(jsonResponse)
-  //       setGarden(jsonResponse);
-  //     } catch (error) {
-  //       console.error('Error occurred fetching data: ', error);
-  //     }
-  //   };
-
-  //   if (garden === null) {
-  //     fetchDataAsync();
-  //   }
-
-  // }, [garden]);
+  useEffect(() => {
+    const getGarden = async () => {
+      console.log(user)
+      try{
+        const response = await GardenAPI.fetchGardenByID(gardenID, user.token)
+        console.log("response:", response)
+        setGarden(response)
+      }catch (error) {
+        console.error(error)
+      }
+    }
+    if (!garden){
+      getGarden()
+    }
+  }, [])
+   
+  useEffect(() => {
+    const getPlants = async () => {
+      console.log(user)
+      try{
+        const response = await GardenAPI.fetchGardenPlants(gardenID, user.token)
+        console.log("response:", response)
+        setPlants(response)
+      }catch (error) {
+        console.error(error)
+      }
+    }
+    if (!plants){
+      getPlants()
+    }
+  }, [])
 
   //Deletes Garden
   const handleClick = () =>{
     try {
-      let gardenID = props.match.params.gardenID
-      GardenAPI.deleteGarden(gardenID)
+      GardenAPI.deleteGarden(gardenID, user.token)
       setDeleted(true)
     } catch (err) {
       console.error(err)
@@ -40,26 +55,30 @@ const GardenPage = (props) => {
   }
 
   const renderGarden = () => {
-    if(user && user.gardens !== null){
-      let gardenID = props.match.params.gardenID
-      if(user.gardens[gardenID -1] !== null && deleted === false){
+    if(user && plants !== null){
+      if(garden !== null && deleted === false){
         return (
           <div>
-            <h1>Garden: {user.gardens[gardenID -1].garden_name}</h1>
-            <p>Location: {user.gardens[gardenID -1].location}</p>
+            <h1>Garden: {garden.garden_name}</h1>
+            <p>Location: {garden.location}</p>
             <hr/>
             <div> Plants:
-              <PlantList plants={user.gardens[gardenID -1].plants} gardenID={gardenID}/>
+              {
+                plants
+                ?
+                <PlantList plants={plants} gardenID={gardenID}/>
+                :
+                "loading"
+              }
+              
             </div>
-            <Link to={`/plants/new`}>New Plant &nbsp;|&nbsp;</Link>
-            <Link to={`/edit`}>Edit Garden</Link>
+            <Link to={`/${gardenID}/new-plant`}>New Plant &nbsp;|&nbsp;</Link>
+            <Link to={`/${gardenID}/edit`}>Edit Garden</Link>
             <br />
             <br />
             <Link to={`/`}>Home</Link>
             <input type='button' value='Delete' onClick={handleClick}></input>
             <hr/>
-            {/* <h2>Plants: </h2>
-            <PostList prefix='posts/' posts={posts.posts} /> */}
           </div>
         )
       }else if(deleted === true){
@@ -74,8 +93,6 @@ const GardenPage = (props) => {
       }
     }
   }
-    
-
 
   return (
     <div>
