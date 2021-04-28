@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
 // import PostList from '../components/PostList/PostList'
 import GardenAPI from "../api/GardenAPI"
-import { Link, Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import PlantList from '../components/PlantList/PlantList';
+import Weather from '../components/Weather/Weather';
 
 const GardenPage = (props) => {
   const [deleted, setDeleted] = useState(false)
@@ -14,10 +15,8 @@ const GardenPage = (props) => {
 
   useEffect(() => {
     const getGarden = async () => {
-      console.log(user)
       try{
         const response = await GardenAPI.fetchGardenByID(gardenID, user.token)
-        console.log("response:", response)
         setGarden(response)
       }catch (error) {
         console.error(error)
@@ -30,10 +29,8 @@ const GardenPage = (props) => {
    
   useEffect(() => {
     const getPlants = async () => {
-      console.log(user)
       try{
         const response = await GardenAPI.fetchGardenPlants(gardenID, user.token)
-        console.log("response:", response)
         setPlants(response)
       }catch (error) {
         console.error(error)
@@ -61,6 +58,7 @@ const GardenPage = (props) => {
           <div>
             <h1>Garden: {garden.garden_name}</h1>
             <p>Location: {garden.location}</p>
+            <Weather location={garden.location} gardenID={garden.id}/>
             <hr/>
             <div> Plants:
               {

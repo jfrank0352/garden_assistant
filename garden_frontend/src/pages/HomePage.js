@@ -8,7 +8,6 @@ const HomePage = ({ isLoggedIn, user, handleLogout }) => {
 
   useEffect(() => {
     const getGardens = async () => {
-      console.log(user)
       try{
         const response = await GardenAPI.fetchAllGardens(user.token)
         setGardens(response)
@@ -19,7 +18,7 @@ const HomePage = ({ isLoggedIn, user, handleLogout }) => {
     if (!gardens){
       getGardens()
     }
-  })
+  }, [user])
 
   const renderGardenList = () =>{
     if(user && gardens !== null){

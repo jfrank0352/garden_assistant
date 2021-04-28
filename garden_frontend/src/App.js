@@ -33,7 +33,7 @@ function App() {
 
     getUser()
 
-  }, [user])
+  }, [user, isLoggedIn])
 
 
   const handleLogin = async (evt) => {
@@ -45,7 +45,6 @@ function App() {
     let response = await login(userObject)
     let data = await response.json()
     if (data.token) {
-      console.log("data:", data)
       localStorage.setItem("auth-user", `${data.token}`)
       setIsLoggedIn(true)
       setUser(data.user)
@@ -56,6 +55,7 @@ function App() {
     localStorage.setItem("auth-user", null)
     setIsLoggedIn(false)
     setUser(null)
+    setAuthUser(null)
   }
 
   const renderLoginPage = () => {
@@ -70,7 +70,6 @@ function App() {
   }
 
   const renderHomePage = () => {
-    console.log("App-user:", authUser)
     return (
       <HomePage
         isLoggedIn={isLoggedIn}
@@ -81,7 +80,6 @@ function App() {
   }
 
   const renderGardenPage = (routeProps) => {
-    console.log('render Garden:',authUser)
     return (
       <GardenPage
         {...routeProps}
